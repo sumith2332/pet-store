@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard – PetStore Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#f1f5f9;min-height:100vh;}
+.dashboard{display:flex;min-height:100vh;}
+.sidebar{width:230px;background:#020617;padding:24px 16px;min-height:100vh;position:sticky;top:0;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.06);}
+.sidebar-brand{font-size:20px;font-weight:700;margin-bottom:6px;padding:0 8px;}
+.sidebar-sub{font-size:11px;color:#334155;padding:0 8px;margin-bottom:28px;}
+.sidebar-badge{
+  display:inline-block;background:#dc2626;color:#fff;
+  font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;
+  letter-spacing:.5px;vertical-align:middle;margin-left:6px;
+}
+.sidebar-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#334155;padding:0 8px;margin:20px 0 8px;}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:#94a3b8;text-decoration:none;font-size:14px;font-weight:500;transition:.2s;margin-bottom:2px;cursor:pointer;}
+.sidebar a:hover{background:rgba(255,255,255,0.06);color:#e2e8f0;}
+.sidebar a.active{background:rgba(59,130,246,0.15);color:#3b82f6;}
+.sidebar a .icon{font-size:16px;width:20px;text-align:center;}
+.admin-pill{
+  margin:0 8px 20px;padding:10px 12px;
+  background:rgba(239,68,68,0.1);
+  border:1px solid rgba(239,68,68,0.2);
+  border-radius:8px;
+  font-size:12px;color:#fca5a5;
+  display:flex;align-items:center;gap:8px;
+}
+.admin-pill .dot{width:7px;height:7px;border-radius:50%;background:#ef4444;flex-shrink:0;}
+.main{flex:1;padding:28px;overflow-x:hidden;}
+.main h1{font-size:26px;font-weight:700;margin-bottom:6px;}
+.main .subtitle{font-size:13px;color:#475569;margin-bottom:24px;}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:28px;}
+.stat-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:18px 16px;transition:.2s;}
+.stat-card:hover{transform:translateY(-3px);border-color:rgba(59,130,246,0.3);}
+.stat-num{font-size:28px;font-weight:700;color:#3b82f6;margin-bottom:4px;}
+.stat-label{font-size:12px;color:#64748b;}
+.stat-card.warn{border-left:3px solid #f87171;}
+.stat-card.warn .stat-num{color:#f87171;}
+.stat-card.green .stat-num{color:#34d399;}
+.card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:22px;margin-bottom:24px;}
+.card h3{font-size:16px;font-weight:700;margin-bottom:16px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-grid.three{grid-template-columns:1fr 1fr 1fr;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group label{font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;}
+.form-group input,.form-group select{padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;font-size:14px;outline:none;transition:.2s;}
+.form-group input:focus,.form-group select:focus{border-color:#3b82f6;}
+.form-group input::placeholder{color:rgba(255,255,255,0.3);}
+.form-group select option{background:#1e293b;color:#fff;}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;}
+button.btn-primary{background:#3b82f6;border:none;padding:10px 20px;border-radius:8px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;}
+button.btn-primary:hover{background:#2563eb;}
+button.btn-secondary{background:#334155;border:none;padding:10px 20px;border-radius:8px;color:#94a3b8;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;}
+button.btn-secondary:hover{background:#475569;color:#fff;}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
+.product{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px;transition:.2s;}
+.product:hover{border-color:rgba(59,130,246,0.3);}
+.product img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;margin-bottom:10px;}
+.cat-tag{display:inline-block;font-size:10px;font-weight:600;background:rgba(59,130,246,0.2);color:#93c5fd;padding:2px 7px;border-radius:4px;margin-bottom:6px;}
+.product h3{font-size:13px;font-weight:600;margin-bottom:2px;}
+.product .brand{font-size:11px;color:#475569;margin-bottom:6px;}
+.product .price{font-size:16px;font-weight:700;color:#3b82f6;}
+.product .stock-info{font-size:11px;color:#64748b;margin-bottom:8px;}
+.low-stock{color:#f87171!important;}
+.prod-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.btn-edit{background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);color:#93c5fd;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;}
+.btn-edit:hover{background:#3b82f6;color:#fff;}
+.btn-del{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#f87171;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;}
+.btn-del:hover{background:#ef4444;color:#fff;}
+.orders-table-wrap{overflow-x:auto;}
+table.orders{width:100%;border-collapse:collapse;}
+table.orders th{text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b;padding:10px 12px;border-bottom:2px solid rgba(255,255,255,0.08);}
+table.orders td{padding:12px 12px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;}
+table.orders tr:hover td{background:rgba(255,255,255,0.02);}
+.status-pill{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;text-transform:uppercase;}
+.status-paid{background:#dcfce7;color:#16a34a;}
+.status-failed{background:#fee2e2;color:#dc2626;}
+.status-created{background:#fef9c3;color:#ca8a04;}
+</style>
+</head>
+<body>
+<div class="dashboard">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">🐾 PetStore <span class="sidebar-badge">ADMIN</span></div>
+    <div class="sidebar-sub">Admin Control Panel</div>
+
+    <div class="admin-pill">
+      <div class="dot"></div>
+      <span>Logged in as <strong>Admin</strong></span>
+    </div>
+
+    <div class="sidebar-section">Main</div>
+    <a class="active" href="/admin">
+      <span class="icon">📊</span> Dashboard
+    </a>
+    <a href="/" target="_blank">
+      <span class="icon">🏪</span> View Store
+    </a>
+
+    <div class="sidebar-section">Management</div>
+    <a onclick="showSection('orders')">
+      <span class="icon">📦</span> Orders
+    </a>
+    <a onclick="showSection('products')">
+      <span class="icon">🛍</span> Products
+    </a>
+    <a onclick="showSection('users')">
+      <span class="icon">👥</span> Users
+    </a>
+
+    <div class="sidebar-section">Account</div>
+    <a onclick="logout()">
+      <span class="icon">🚪</span> Logout
+    </a>
+  </aside>
+
+  <main class="main">
+    <h1>Admin Dashboard</h1>
+    <p class="subtitle">Manage products, orders, and registered users.</p>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num" id="s-products">–</div>
+        <div class="stat-label">Total Products</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="s-orders">–</div>
+        <div class="stat-label">Paid Orders</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="s-revenue">–</div>
+        <div class="stat-label">Revenue</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-num" id="s-users">–</div>
+        <div class="stat-label">Registered Users</div>
+      </div>
+      <div class="stat-card" id="stat-low">
+        <div class="stat-num" id="s-low">–</div>
+        <div class="stat-label">Low Stock Items</div>
+      </div>
+    </div>
+
+    <!-- Add / Edit Product Form -->
+    <div class="card" id="section-form">
+      <h3 id="form-title">➕ Add New Product</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Product Name *</label>
+          <input id="p-name" placeholder="e.g. Royal Canin Adult 3kg">
+        </div>
+        <div class="form-group">
+          <label>Brand</label>
+          <input id="p-brand" placeholder="e.g. Royal Canin">
+        </div>
+      </div>
+      <div class="form-grid three">
+        <div class="form-group">
+          <label>Price (₹) *</label>
+          <input id="p-price" placeholder="499" type="number">
+        </div>
+        <div class="form-group">
+          <label>Stock</label>
+          <input id="p-stock" placeholder="50" type="number">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="p-category">
+            <option value="Dog Food">Dog Food</option>
+            <option value="Cat Food">Cat Food</option>
+            <option value="Medicine">Medicine</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Grooming">Grooming</option>
+            <option value="Birds & Small">Birds &amp; Small</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Image URL</label>
+          <input id="p-image" placeholder="https://...">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="saveProduct()" id="save-btn">Save Product</button>
+        <button class="btn-secondary" onclick="cancelEdit()" id="cancel-btn" style="display:none;">Cancel Edit</button>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div id="section-products">
+      <div class="card" style="padding:14px 22px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
+        <h3 style="margin:0;">All Products</h3>
+        <input id="prod-search" placeholder="🔍 Search products..." style="padding:8px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;width:240px;font-size:13px;outline:none;" oninput="filterProducts()">
+      </div>
+      <div id="list" class="product-grid"></div>
+    </div>
+
+    <!-- Orders Section -->
+    <div id="section-orders" style="display:none;">
+      <div class="card">
+        <h3>📦 All Orders</h3>
+        <div class="orders-table-wrap">
+          <div id="orders-content"><p style="color:#64748b;">Loading...</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Section -->
+    <div id="section-users" style="display:none;">
+      <div class="card">
+        <h3>👥 Registered Users</h3>
+        <div class="orders-table-wrap">
+          <div id="users-content"><p style="color:#64748b;">Loading...</p></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/static/js/auth.js"></script>
+<script src="/static/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sign In – PetStore Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:linear-gradient(135deg,#0f172a 0%,#1e293b 60%,#0f172a 100%);color:#f1f5f9;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+
+/* ── Background paw prints decoration ── */
+body::before{
+  content:'🐾';
+  position:fixed;top:5%;left:5%;
+  font-size:120px;opacity:0.04;
+  pointer-events:none;
+}
+body::after{
+  content:'🐾';
+  position:fixed;bottom:5%;right:5%;
+  font-size:120px;opacity:0.04;
+  pointer-events:none;
+  transform:rotate(180deg);
+}
+
+.wrapper{width:100%;max-width:420px;}
+
+/* ── Logo ── */
+.logo{text-align:center;margin-bottom:28px;}
+.logo-icon{font-size:48px;display:block;margin-bottom:8px;}
+.logo h1{font-size:26px;font-weight:700;letter-spacing:-.5px;}
+.logo p{font-size:13px;color:#64748b;margin-top:4px;}
+
+/* ── Card ── */
+.card{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px;
+  padding:36px 32px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 32px 64px rgba(0,0,0,0.4);
+}
+
+/* ── Tabs ── */
+.tabs{display:flex;border-radius:10px;background:rgba(255,255,255,0.06);padding:4px;margin-bottom:28px;gap:4px;}
+.tab{
+  flex:1;padding:9px;border-radius:7px;
+  border:none;cursor:pointer;
+  font-size:14px;font-weight:600;
+  background:transparent;color:#64748b;
+  transition:.2s;
+}
+.tab.active{background:#3b82f6;color:#fff;box-shadow:0 4px 12px rgba(59,130,246,0.35);}
+
+/* ── Form ── */
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+.form-group input{
+  width:100%;padding:12px 16px;
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;color:#fff;font-size:15px;
+  outline:none;transition:.2s;
+}
+.form-group input:focus{border-color:#3b82f6;background:rgba(59,130,246,0.08);}
+.form-group input::placeholder{color:rgba(255,255,255,0.28);}
+
+.btn-submit{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,#3b82f6,#2563eb);
+  border:none;border-radius:10px;
+  color:#fff;font-size:16px;font-weight:700;
+  cursor:pointer;margin-top:6px;transition:.2s;
+  letter-spacing:.3px;
+}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(59,130,246,0.4);}
+.btn-submit:active{transform:none;}
+
+.msg{
+  text-align:center;font-size:13px;
+  margin-top:14px;min-height:18px;
+  padding:10px;border-radius:8px;
+  display:none;
+}
+.msg.error{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;display:block;}
+.msg.success{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#86efac;display:block;}
+
+/* ── Divider ── */
+.divider{display:flex;align-items:center;gap:10px;margin:10px 0 4px;}
+.divider hr{flex:1;border:none;border-top:1px solid rgba(255,255,255,0.08);}
+.divider span{font-size:12px;color:#475569;}
+
+/* ── Admin link ── */
+.admin-link{text-align:center;margin-top:20px;font-size:13px;color:#475569;}
+.admin-link a{color:#64748b;text-decoration:none;transition:.2s;}
+.admin-link a:hover{color:#94a3b8;}
+
+/* ── Panel switching ── */
+#panel-register{display:none;}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="logo">
+    <span class="logo-icon">🐾</span>
+    <h1>PetStore Pro</h1>
+    <p>Premium pet care, delivered to your door</p>
+  </div>
+
+  <div class="card">
+    <!-- Tab switcher -->
+    <div class="tabs">
+      <button class="tab active" id="tab-login"    onclick="switchTab('login')">Sign In</button>
+      <button class="tab"        id="tab-register" onclick="switchTab('register')">Create Account</button>
+    </div>
+
+    <!-- LOGIN PANEL -->
+    <div id="panel-login">
+      <div class="form-group">
+        <label>Username or Email</label>
+        <input id="l-identifier" placeholder="yourname or you@email.com" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input id="l-password" type="password" placeholder="••••••••"
+               autocomplete="current-password"
+               onkeydown="if(event.key==='Enter')loginUser()">
+      </div>
+      <button class="btn-submit" onclick="loginUser()">Sign In →</button>
+      <div class="msg" id="l-msg"></div>
+    </div>
+
+    <!-- REGISTER PANEL -->
+    <div id="panel-register">
+      <div class="form-group">
+        <label>Username</label>
+        <input id="r-username" placeholder="yourname" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input id="r-email" type="email" placeholder="you@email.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Password <span style="color:#475569;font-weight:400;font-size:10px;">(min 6 chars)</span></label>
+        <input id="r-password" type="password" placeholder="••••••••"
+               autocomplete="new-password"
+               onkeydown="if(event.key==='Enter')registerUser()">
+      </div>
+      <button class="btn-submit" onclick="registerUser()">Create Account →</button>
+      <div class="msg" id="r-msg"></div>
+    </div>
+  </div>
+
+  <div class="admin-link">
+    <a href="/admin-login">Admin Panel →</a>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+// ── Tab switching ────────────────────────────────────────────
+function switchTab(tab) {
+  const isLogin = (tab === 'login');
+  document.getElementById('panel-login').style.display    = isLogin ? 'block' : 'none';
+  document.getElementById('panel-register').style.display = isLogin ? 'none'  : 'block';
+  document.getElementById('tab-login').classList.toggle('active',    isLogin);
+  document.getElementById('tab-register').classList.toggle('active', !isLogin);
+  clearMsgs();
+}
+
+function clearMsgs() {
+  ['l-msg','r-msg'].forEach(id => {
+    const el = document.getElementById(id);
+    el.textContent = '';
+    el.className = 'msg';
+  });
+}
+
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg ' + type;
+}
+
+// ── Login ───────────────────────────────────────────────────
+async function loginUser() {
+  const identifier = document.getElementById('l-identifier').value.trim();
+  const password   = document.getElementById('l-password').value;
+
+  if (!identifier || !password) {
+    showMsg('l-msg', 'Please fill in all fields.', 'error');
+    return;
+  }
+
+  showMsg('l-msg', 'Signing in…', '');
+
+  try {
+    const res  = await fetch('/api/user/login', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ identifier, password }),
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      showMsg('l-msg', '✓ Welcome back, ' + data.user.username + '!', 'success');
+      setTimeout(() => { window.location.href = '/'; }, 700);
+    } else {
+      showMsg('l-msg', data.error || 'Login failed.', 'error');
+      document.getElementById('l-password').value = '';
+    }
+  } catch (err) {
+    showMsg('l-msg', 'Network error. Is the server running?', 'error');
+  }
+}
+
+// ── Register ─────────────────────────────────────────────────
+async function registerUser() {
+  const username = document.getElementById('r-username').value.trim();
+  const email    = document.getElementById('r-email').value.trim();
+  const password = document.getElementById('r-password').value;
+
+  if (!username || !email || !password) {
+    showMsg('r-msg', 'Please fill in all fields.', 'error');
+    return;
+  }
+
+  showMsg('r-msg', 'Creating account…', '');
+
+  try {
+    const res  = await fetch('/api/user/register', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ username, email, password }),
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      showMsg('r-msg', '✓ Account created! Redirecting…', 'success');
+      setTimeout(() => { window.location.href = '/'; }, 800);
+    } else {
+      showMsg('r-msg', data.error || 'Registration failed.', 'error');
+    }
+  } catch (err) {
+    showMsg('r-msg', 'Network error. Is the server running?', 'error');
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PetStore Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%);color:#f1f5f9;min-height:100vh;}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 32px;background:rgba(255,255,255,0.04);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
+.brand{font-size:22px;font-weight:700;}
+.nav-links{display:flex;gap:4px;align-items:center;}
+.nav-links a,.nav-links button{color:#cbd5e1;text-decoration:none;padding:8px 16px;border-radius:8px;font-size:14px;font-weight:500;transition:.2s;background:transparent;border:none;cursor:pointer;}
+.nav-links a:hover,.nav-links button:hover{background:rgba(255,255,255,0.08);color:#fff;}
+.badge{display:inline-flex;align-items:center;justify-content:center;background:#ef4444;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:700;margin-left:4px;vertical-align:middle;}
+/* User greeting chip */
+.user-chip{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 14px;border-radius:20px;
+  background:rgba(59,130,246,0.12);
+  border:1px solid rgba(59,130,246,0.25);
+  font-size:13px;font-weight:500;color:#93c5fd;
+}
+.user-chip .avatar{
+  width:26px;height:26px;border-radius:50%;
+  background:#3b82f6;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.hero{text-align:center;padding:60px 20px 36px;background:radial-gradient(ellipse at center,rgba(59,130,246,0.12) 0%,transparent 70%);}
+.hero h1{font-size:42px;font-weight:700;letter-spacing:-1px;margin-bottom:10px;}
+.hero p{font-size:15px;color:#94a3b8;letter-spacing:3px;}
+.filters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:16px 20px 4px;}
+.filter-btn{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#cbd5e1;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:500;transition:.2s;}
+.filter-btn:hover,.filter-btn.active{background:#3b82f6;border-color:#3b82f6;color:#fff;}
+.search-wrap{padding:10px 24px 4px;max-width:500px;margin:0 auto;}
+.search-wrap input{width:100%;padding:11px 18px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#fff;font-size:14px;outline:none;}
+.search-wrap input::placeholder{color:rgba(255,255,255,0.35);}
+.search-wrap input:focus{border-color:#3b82f6;}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px;padding:20px 24px;}
+.product{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;transition:.25s;display:flex;flex-direction:column;}
+.product:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,0.35);border-color:rgba(59,130,246,0.4);}
+.product img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;margin-bottom:10px;}
+.cat-tag{display:inline-block;font-size:10px;font-weight:600;background:rgba(59,130,246,0.2);color:#93c5fd;padding:3px 8px;border-radius:4px;margin-bottom:6px;letter-spacing:.5px;}
+.product h3{font-size:14px;font-weight:600;line-height:1.4;margin-bottom:2px;}
+.product .brand{font-size:11px;color:#64748b;margin-bottom:6px;}
+.product .price{font-size:20px;font-weight:700;color:#3b82f6;margin-bottom:2px;}
+.product .stock{font-size:11px;color:#64748b;margin-bottom:10px;}
+.product button{width:100%;background:#3b82f6;border:none;padding:10px;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;margin-top:auto;}
+.product button:hover:not(:disabled){background:#2563eb;}
+.product button:disabled{background:#334155;cursor:not-allowed;color:#64748b;}
+.empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:#475569;font-size:16px;}
+#toast{position:fixed;bottom:28px;right:28px;background:#3b82f6;color:#fff;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(59,130,246,0.4);opacity:0;pointer-events:none;transition:opacity .3s;z-index:999;}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="brand">🐾 PetStore Pro</div>
+  <div class="nav-links">
+    <div class="user-chip" id="user-chip" style="display:none;">
+      <div class="avatar" id="user-avatar">?</div>
+      <span id="user-name">User</span>
+    </div>
+    <a href="{{ url_for('cart') }}">🛒 Cart<span class="badge" id="cart-count"></span></a>
+    <button type="button" onclick="logoutUser()" id="logout-btn" style="display:none;">Logout</button>
+  </div>
+</nav>
+<section class="hero">
+  <h1>Welcome to PetStorePro</h1>
+  <p>FOOD &nbsp;•&nbsp; MEDICINE &nbsp;•&nbsp; ACCESSORIES &nbsp;•&nbsp; GROOMING</p>
+</section>
+<div class="search-wrap">
+  <input id="search" placeholder="🔍  Search products or brands..." oninput="applyFilters()">
+</div>
+<div class="filters">
+  <button class="filter-btn active" onclick="setFilter('')"              id="f-all">All</button>
+  <button class="filter-btn"        onclick="setFilter('Dog Food')"      id="f-dog">🐶 Dog Food</button>
+  <button class="filter-btn"        onclick="setFilter('Cat Food')"      id="f-cat">🐱 Cat Food</button>
+  <button class="filter-btn"        onclick="setFilter('Medicine')"      id="f-med">💊 Medicine</button>
+  <button class="filter-btn"        onclick="setFilter('Accessories')"   id="f-acc">🎾 Accessories</button>
+  <button class="filter-btn"        onclick="setFilter('Grooming')"      id="f-grm">✂ Grooming</button>
+  <button class="filter-btn"        onclick="setFilter('Birds &amp; Small')" id="f-bird">🐦 Birds &amp; Small</button>
+</div>
+<div id="products" class="product-grid"></div>
+<div id="toast"></div>
+<script src="/static/js/store.js"></script>
+</body>
+</html>

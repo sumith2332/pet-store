@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Payment Receipt – PetStore Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#f1f5f9;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px;}
+/* ── Slip Card ──────────────────────────────────────── */
+.slip{
+  background:#fff;color:#1e293b;
+  max-width:560px;width:100%;
+  border-radius:20px;
+  box-shadow:0 32px 80px rgba(0,0,0,0.5);
+  overflow:hidden;
+}
+/* Header */
+.slip-header{
+  background:linear-gradient(135deg,#3b82f6,#2563eb);
+  color:#fff;text-align:center;
+  padding:32px 24px 24px;
+}
+.slip-header .check{font-size:52px;margin-bottom:10px;}
+.slip-header h1{font-size:24px;font-weight:700;margin-bottom:4px;}
+.slip-header p{font-size:14px;opacity:.85;}
+/* Body */
+.slip-body{padding:28px 32px;}
+.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:12px;}
+/* Info grid */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;margin-bottom:24px;}
+.info-cell label{display:block;font-size:11px;color:#94a3b8;margin-bottom:2px;}
+.info-cell span{font-size:14px;font-weight:600;color:#1e293b;word-break:break-all;}
+/* Items table */
+.items-table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+.items-table th{text-align:left;font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;padding:8px 0;border-bottom:2px solid #e2e8f0;}
+.items-table td{padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:13px;vertical-align:middle;}
+.items-table td:last-child{text-align:right;font-weight:600;color:#2563eb;}
+.items-table th:last-child{text-align:right;}
+.item-name-cell{font-weight:600;color:#1e293b;}
+.item-qty-cell{color:#64748b;font-size:12px;}
+/* Total */
+.total-section{background:#f8fafc;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.total-label{font-size:14px;font-weight:600;color:#475569;}
+.total-amount{font-size:24px;font-weight:700;color:#2563eb;}
+/* Footer */
+.slip-footer{background:#f8fafc;padding:16px 32px;text-align:center;font-size:12px;color:#94a3b8;border-top:1px solid #e2e8f0;}
+.slip-footer strong{color:#475569;}
+/* Status badge */
+.status-badge{
+  display:inline-block;padding:4px 12px;border-radius:12px;
+  font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  background:#dcfce7;color:#16a34a;
+}
+/* Actions */
+.actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+.btn-print{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;}
+.btn-print:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,0.35);}
+.btn-shop{background:#fff;color:#2563eb;border:2px solid #3b82f6;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:.2s;}
+.btn-shop:hover{background:#eff6ff;}
+/* Divider */
+.dots{display:flex;gap:6px;margin:16px 0;}
+.dot{width:6px;height:6px;border-radius:50%;background:#e2e8f0;}
+@media print{
+  body{background:#fff;padding:0;}
+  .actions{display:none;}
+  .slip{box-shadow:none;border-radius:0;max-width:100%;}
+}
+</style>
+</head>
+<body>
+
+<div class="slip">
+  <!-- ── Header ──────────────────────────────────────── -->
+  <div class="slip-header">
+    <div class="check">✅</div>
+    <h1>Payment Successful!</h1>
+    <p>Thank you for shopping with PetStore Pro</p>
+  </div>
+
+  <!-- ── Body ────────────────────────────────────────── -->
+  <div class="slip-body">
+
+    <!-- Order Info -->
+    <div class="section-title">Order Details</div>
+    <div class="info-grid">
+      <div class="info-cell">
+        <label>Order ID</label>
+        <span>#{{ order.id }}</span>
+      </div>
+      <div class="info-cell">
+        <label>Status</label>
+        <span class="status-badge">{{ order.status }}</span>
+      </div>
+      <div class="info-cell">
+        <label>Date &amp; Time</label>
+        <span>{{ order.created.strftime('%d %b %Y, %I:%M %p') }}</span>
+      </div>
+      <div class="info-cell">
+        <label>Payment ID</label>
+        <span>{{ order.razorpay_payment or '—' }}</span>
+      </div>
+      {% if order.customer_name %}
+      <div class="info-cell">
+        <label>Customer</label>
+        <span>{{ order.customer_name }}</span>
+      </div>
+      {% endif %}
+      {% if order.customer_phone %}
+      <div class="info-cell">
+        <label>Phone</label>
+        <span>{{ order.customer_phone }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="dots">
+      {% for i in range(20) %}<div class="dot"></div>{% endfor %}
+    </div>
+
+    <!-- Items -->
+    {% if items %}
+    <div class="section-title">Items Purchased</div>
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Qty</th>
+          <th>Price</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td class="item-name-cell">{{ item.name }}</td>
+          <td class="item-qty-cell">× {{ item.qty }}</td>
+          <td>₹{{ "{:,.0f}".format(item.price) }}</td>
+          <td>₹{{ "{:,.0f}".format(item.price * item.qty) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    <!-- Total -->
+    <div class="total-section">
+      <span class="total-label">Total Amount Paid</span>
+      <span class="total-amount">₹{{ "{:,.0f}".format(order.amount) }}</span>
+    </div>
+
+    <!-- Razorpay Order Ref -->
+    <div style="font-size:11px;color:#94a3b8;text-align:center;">
+      Razorpay Order Ref: <strong style="color:#475569;">{{ order.razorpay_order }}</strong>
+    </div>
+
+  </div>
+
+  <!-- ── Footer ──────────────────────────────────────── -->
+  <div class="slip-footer">
+    <strong>PetStore Pro</strong> — Premium Pet Care Products<br>
+    This is your digital receipt. Keep it for your records.
+  </div>
+</div>
+
+<!-- ── Action Buttons ──────────────────────────────────── -->
+<div class="actions">
+  <button class="btn-print" onclick="window.print()">🖨 Print Receipt</button>
+  <a class="btn-shop" href="{{ url_for('index') }}">Continue Shopping</a>
+</div>
+
+</body>
+</html>
